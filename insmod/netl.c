@@ -27,7 +27,10 @@ void sendnlmsg(char *message, int pid)
 
     printk(KERN_ERR "pid:%d\n",current->pid);
     printk(KERN_ERR "loginuid:%d\n",current->loginuid);
-    printk(KERN_ERR "loginuid:%s\n",current->comm);
+    printk(KERN_ERR "loginuid.val:%d\n",(current->loginuid).val);
+    printk(KERN_ERR "current_uid():%d\n",current_uid().val);
+    printk(KERN_ERR "current->cred->uid:%d\n",(current->cred->uid).val);
+    printk(KERN_ERR "comm:%s\n",current->comm);
     
 
     skb_1 = alloc_skb(len,GFP_KERNEL);
