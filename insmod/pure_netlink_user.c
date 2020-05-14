@@ -28,12 +28,12 @@ int main(int argc, char* argv[])
     int sock_fd, bind_status;
 
     char *sendMessage = "Hello you!";
-    
+
 
     // Create socket
     sock_fd = socket(AF_NETLINK, SOCK_RAW, 25);
-    if(sock_fd == -1){
-        printf("error getting socket: %s", strerror(errno));
+    if (sock_fd == -1) {
+        printf("pure -> error getting socket: %s", strerror(errno));
         return -1;
     }
 
@@ -44,52 +44,50 @@ int main(int argc, char* argv[])
     src_addr.nl_groups = 0;
 
     // Bind
-    bind_status = bind(sock_fd, (struct sockaddr*)&src_addr, sizeof(src_addr));
-    if(bind_status < 0){
-        printf("bind sock_fd failed: %s", strerror(errno));
+    bind_status = bind(sock_fd, (struct sockaddr *) &src_addr, sizeof(src_addr));
+    if (bind_status < 0) {
+        printf("pure -> bind sock_fd failed: %s", strerror(errno));
         close(sock_fd);
         return -1;
     }
 
     // To prepare create message
-    nlh = (struct nlmsghdr *)malloc(NLMSG_SPACE(PURE_NETLINK_MAX_MSG_SIZE));
-    if(!nlh){
-        printf("malloc struct nlmsghdr error!\n");
+    nlh = (struct nlmsghdr *) malloc(NLMSG_SPACE(PURE_NETLINK_MAX_MSG_SIZE));
+    if (!nlh) {
+        printf("pure -> malloc struct nlmsghdr error!\n");
         close(sock_fd);
         return -1;
     }
 
 
-    memset(&dest_addr,0,sizeof(dest_addr));
+    memset(&dest_addr, 0, sizeof(dest_addr));
     dest_addr.nl_family = AF_NETLINK;
     dest_addr.nl_pid = 0; //B：设置目的端口号
     dest_addr.nl_groups = 0;
     nlh->nlmsg_len = NLMSG_SPACE(PURE_NETLINK_MAX_MSG_SIZE);
     nlh->nlmsg_pid = 100; //C：设置源端口
     nlh->nlmsg_flags = 0;
-    strcpy(NLMSG_DATA(nlh), sendMessage); //设置消息体
-    iov.iov_base = (void *)nlh;
+    strcpy((char *) NLMSG_DATA(nlh), sendMessage); //设置消息体
+    iov.iov_base = (void *) nlh;
     iov.iov_len = NLMSG_SPACE(PURE_NETLINK_MAX_MSG_SIZE);
 
     // Create message
     memset(&msg, 0, sizeof(msg));
-    msg.msg_name = (void *)&dest_addr;
+    msg.msg_name = (void *) &dest_addr;
     msg.msg_namelen = sizeof(dest_addr);
     msg.msg_iov = &iov;
     msg.msg_iovlen = 1;
 
     // Send message
-    send_state = sendmsg(sock_fd,&msg,0);
-    printf("Sent state: %d, message: %s\n", send_state, (char *)NLMSG_DATA(nlh));
+    send_state = sendmsg(sock_fd, &msg, 0);
+    printf("pure -> Sent state: %d, message: %s\n", send_state, (char *) NLMSG_DATA(nlh));
 
-    memset(nlh,0,NLMSG_SPACE(PURE_NETLINK_MAX_MSG_SIZE));
+    memset(nlh, 0, NLMSG_SPACE(PURE_NETLINK_MAX_MSG_SIZE));
 
     // Receive message
-    while(1){
-    printf("Waiting for receive...\n");
+    printf("pure -> Waiting for receive...\n");
     recv_state = recvmsg(sock_fd, &msg, 0);
-    printf("Received state: %d, message: %s\n", recv_state, (char *)NLMSG_DATA(nlh));
-}
+    printf("pure -> Received state: %d, message: %s\n", recv_state, (char *) NLMSG_DATA(nlh));
 
     close(sock_fd);
     return 0;

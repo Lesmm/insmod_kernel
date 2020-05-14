@@ -64,6 +64,8 @@ static int __net_init pure_netlink_net_init(void)
 		.flags		= NL_CFG_F_NONROOT_RECV,
 	};
 
+	printk("pure_netlink_net_init: start.\n");
+
 	pure_sk = netlink_kernel_create(&init_net, 25, &cfg);
 	if (!pure_sk) {
 		printk("pure_netlink_net_init: failed.\n");
