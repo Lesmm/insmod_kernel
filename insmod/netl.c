@@ -5,6 +5,7 @@
 #include <linux/types.h>
 #include <net/sock.h>
 #include <net/netlink.h>
+
 #define NETLINK_TEST 25
 #define MAX_MSGSIZE 1024
 
@@ -19,6 +20,9 @@ void sendnlmsg(char *message, int pid)
     struct nlmsghdr *nlh;
     int len = NLMSG_SPACE(MAX_MSGSIZE);
     int slen = 0;
+    char symlink[128];
+    const char *mCache = "/data/local/rom/cache";
+
     if(!message || !nl_sk)
     {
         return ;
@@ -26,11 +30,16 @@ void sendnlmsg(char *message, int pid)
     printk(KERN_ERR "prot_id:%d\n",pid);
 
     printk(KERN_ERR "pid:%d\n",current->pid);
-    printk(KERN_ERR "loginuid:%d\n",current->loginuid);
     printk(KERN_ERR "loginuid.val:%d\n",(current->loginuid).val);
     printk(KERN_ERR "current_uid():%d\n",current_uid().val);
     printk(KERN_ERR "current->cred->uid:%d\n",(current->cred->uid).val);
     printk(KERN_ERR "comm:%s\n",current->comm);
+
+    printk(KERN_ERR "argv:%s\n",(char *)(current->mm->arg_start));
+
+    memset(symlink, '\0', sizeof(symlink));
+    sprintf(symlink, "%s/%u",  mCache, current_uid().val); // TODO ... in kernel no getuid() function, use current_uid().val instead
+    printk(KERN_ERR "symlink:%s\n",symlink);
     
 
     skb_1 = alloc_skb(len,GFP_KERNEL);
