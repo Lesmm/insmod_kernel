@@ -21,13 +21,14 @@ https://blog.csdn.net/zhao_h/article/details/80943226
 
 
 
-
-
-	cd user
-	gcc user.c
-	gcc user2.c -o a2.out
+	gcc user.c -o user.o
+	gcc user2.c -o user2.o
 	
-	./a.out
-	./a2.out
+	./user.o
+	./user2.o
 
 	重新 make && insmod 后，Ctrl + C 一下.out程序，以免出现 rmmod: ERROR: Module netl is in use 
+
+
+	/home/ubuntu/Disk16.04/home/ubuntu/Android/Sdk/platform-tools/adb reboot bootloader
+	/home/ubuntu/Disk16.04/home/ubuntu/Android/Sdk/platform-tools/fastboot boot ${OUT}/boot.img
