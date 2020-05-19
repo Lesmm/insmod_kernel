@@ -47,7 +47,7 @@ static void pure_netlink_recv(struct sk_buff *__skb)
 	if(skb->len >= NLMSG_SPACE(0)) {
 		nlh = nlmsg_hdr(skb);
 		memcpy(receive, NLMSG_DATA(nlh), sizeof(receive));
-		printk("pure_netlink_recv:%s\n", receive) ;
+		printk("pure_netlink_recv: %s\n", receive) ;
 
 		send = "I am from kernel!";
 		pure_netlink_send(send, nlh->nlmsg_pid);
